@@ -1,4 +1,5 @@
 SecantMethod <- function(func, x0, x1, macheps, maxIter) {
+  print("=== This is Secant Method ===")
   #since func = cos(x) we have to make it look like cos(x0) and cos(x1)
   #sub to capture the first 5 characters as a group ((.{5})) 
   # followed by one or more characters in another capture group ((.*)) 
@@ -7,7 +8,7 @@ SecantMethod <- function(func, x0, x1, macheps, maxIter) {
   func0 = sub("(.{5})(.*)", "\\10\\2", func) #add a zero to x, for example cos(x) becomes cos(x0)
   y0 = eval(parse(text=func0))
   
-  func1 = sub("(.{5})(.*)", "\\11\\2", func) #add a zero to x, for example cos(x) becomes cos(x0)
+  func1 = sub("(.{5})(.*)", "\\11\\2", func) #add a one to x, for example cos(x) becomes cos(x1)
   y1 = eval(parse(text=func1))
   
   count = 0
@@ -73,6 +74,7 @@ find_discriminant <- function(a,b,c) {
 }
 
 MullerMethod <- function(func, x0, x1, x2, macheps, maxIter) {
+  print("=== This is Muller's Method ===")
   errApprox = 99999
   count = 0
   while(errApprox >= macheps & count < maxIter) {
@@ -102,21 +104,30 @@ MullerMethod <- function(func, x0, x1, x2, macheps, maxIter) {
 
     x3 = x2 - (2*C / find_discriminant(A,B,C))
     
-    func3 = sub("(.{5})(.*)", "\\13\\2", func) #add a two to x, for example cos(x) becomes cos(x2)
+    func3 = sub("(.{5})(.*)", "\\13\\2", func) #add a three to x, for example cos(x) becomes cos(x3)
     y3 = eval(parse(text=func3))
     errApprox = (abs(x3 - x2) / x3) * 100
-    print(errApprox)
+    
+    #update exes
     x0 = x1
     x1 = x2
     x2 = x3
+    print(paste("Iter ", count,sep=""))
+    print(paste("x0 = ", x0, " | x1 = ", x1, " | x2 = ", x2,  " | x3 = ", x3, " | f(x0) = ", y0, " | f(x1) = ", y1, " | y2 = ", y2, " | y3 = ", y3, " | errorApprox = ", errApprox, sep=""))
+    
     count = count+1
   }
   return(list(x0 = x0, x1 = x1, x2 = x2, x3 = x3, num_iterations = count, ea = errApprox))
 }
 
 func = "cos(x)"
-#sec = SecantMethod(func, 0, 2, 0.00005, 5)
+sec = SecantMethod(func, 0, 2, 0.00005, 5)
 #print(paste("root: ", sec$root, sep=""))
-MullerMethod(func,0,2,4,0.00001,7)
+
+print("*****************************************************************")
+print("*****************************************************************")
+
+muller = MullerMethod(func,0,2,4,0.00001,7)
+#print(paste("root: ", muller$x3, sep = ""))
 
 
