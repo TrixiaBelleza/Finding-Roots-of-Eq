@@ -1,4 +1,6 @@
-SecantMethod <- function(func, x0, x1, macheps, maxIter) {
+SecantMethod <- function(func, x0, x1, macheps, maxIter, verbose=TRUE) {
+  initX0 = x0
+  initX1 = x1
   print("=== This is Secant Method ===")
   #since func = cos(x) we have to make it look like cos(x0) and cos(x1)
   #sub to capture the first 5 characters as a group ((.{5})) 
@@ -23,12 +25,17 @@ SecantMethod <- function(func, x0, x1, macheps, maxIter) {
       #((x_curr - x_prev) / x_curr) * 100%
       #x_prev = x1
       errApprox = abs((x-x1) / x) * 100
-      print(paste("Iter ", count,sep=""))
-      print(paste("x0 = ", x0, " | x1 = ", x1, " | f(x0) = ", y0, " | f(x1) = ", y1, " | x = ", x, " | f(x) = ", y, " | errorApprox = ", errApprox, sep=""))
+      if(verbose==TRUE) {
+        print(paste("Iter ", count,sep=""))
+        print(paste("x0 = ", x0, " | x1 = ", x1, " | f(x0) = ", y0, " | f(x1) = ", y1, " | x = ", x, " | f(x) = ", y, " | errorApprox = ", errApprox, sep=""))
+      }
     }
-    else { 
+    else{
+      if(verbose==TRUE) { 
+      
       print(paste("Iter ", count,sep=""))
       print(paste("x0 = ", x0, " | x1 = ", x1, " | f(x0) = ", y0, " | f(x1) = ", y1, " | x = ", x, " | f(x) = ", y, " | errorApprox = NA", sep=""))
+      }
     }
     x0 = x1
     y0 = y1
@@ -37,7 +44,7 @@ SecantMethod <- function(func, x0, x1, macheps, maxIter) {
     count = count + 1
    
   }
-  return(list(root = x, num_iter = count, ea = errApprox))
+  return(list(f=func, given_x0=initX0, given_x1=initX1, x = x, num_iter = count, ea = errApprox))
 }
 
 compute_h_and_d <- function(y1, y0, x1, x0) {
@@ -73,7 +80,10 @@ find_discriminant <- function(a,b,c) {
   return(discriminants)
 }
 
-MullerMethod <- function(func, x0, x1, x2, macheps, maxIter) {
+MullerMethod <- function(func, x0, x1, x2, macheps, maxIter, verbose=TRUE) {
+  initX0 = x0
+  initX1 = x1
+  initX2 = x2
   print("=== This is Muller's Method ===")
   errApprox = 99999
   count = 0
@@ -112,22 +122,25 @@ MullerMethod <- function(func, x0, x1, x2, macheps, maxIter) {
     x0 = x1
     x1 = x2
     x2 = x3
-    print(paste("Iter ", count,sep=""))
-    print(paste("x0 = ", x0, " | x1 = ", x1, " | x2 = ", x2,  " | x3 = ", x3, " | f(x0) = ", y0, " | f(x1) = ", y1, " | y2 = ", y2, " | y3 = ", y3, " | errorApprox = ", errApprox, sep=""))
-    
+    if(verbose==TRUE){
+      print(paste("Iter ", count,sep=""))
+      print(paste("x0 = ", x0, " | x1 = ", x1, " | x2 = ", x2,  " | x3 = ", x3, " | f(x0) = ", y0, " | f(x1) = ", y1, " | y2 = ", y2, " | y3 = ", y3, " | errorApprox = ", errApprox, sep=""))
+    }
     count = count+1
   }
-  return(list(x0 = x0, x1 = x1, x2 = x2, x3 = x3, num_iterations = count, ea = errApprox))
+  return(list(f = func, given_x0 = initX0, given_x1 = initX1, given_x2 = initX2, x3 = x3, iterations = count, ea = errApprox))
 }
 
 func = "cos(x)"
-sec = SecantMethod(func, 0, 2, 0.00005, 5)
+sec = SecantMethod(func, 0, 2, 0.00005, 5, FALSE)
+print(sec)
 #print(paste("root: ", sec$root, sep=""))
 
 print("*****************************************************************")
 print("*****************************************************************")
 
-muller = MullerMethod(func,0,2,4,0.00001,7)
+muller = MullerMethod(func,0,2,4,0.00001,7, FALSE)
+print(muller)
 #print(paste("root: ", muller$x3, sep = ""))
 
 
